@@ -1,1 +1,1 @@
-web: gunicorn vepo.wsgi:application --log-file-
+web: gunicorn vepo.wsgi:application --log-file -
