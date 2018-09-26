@@ -41,7 +41,7 @@ class ChartData(APIView):
     def get(self, request):
 
         data = getPV(request.session['cep'])
-        consumo = request.sessions['consumo']
+        consumo = int(request.session['consumo'])
 
         areaMedia = 10. #m2
         kitPreco = 10000. #reais
@@ -49,16 +49,22 @@ class ChartData(APIView):
         radiacaoMedia = np.mean(data.wp.values)
         kWh = 0.8 #centavos
 
-        radiacao = radiacaoMedia * dias * areaMedia * 0.15 * kWh
+        radiacao = radiacaoMedia * areaMedia * 0.15 * kWh
         financeiroConsumo = consumo * kWh
         economiaConsumo = financeiroConsumo - radiacao
 
-        tempoPayOff = np.ceil(kitPreco/economiaConsumo) * 30.
+        print(type(radiacao), radiacao)
+
+        tempoPayOff = int(np.ceil(kitPreco/economiaConsumo) * 30)
+
 
         hoje = dt.datetime.today()
 
-        datas = [hoje + dt.timedelta(days=1) for i in range(tempoPayOff)]
-        amortizacao = [kitPreco - radiacao for i in range(tempoPayOff)]
+        datas = [hoje + dt.timedelta(days=i) for i in range(tempoPayOff)]
+        datas = [i.strftime('%d/%M/%Y') for i in datas]
+        amortizacao = list(kitPreco - np.array([radiacao * i for i in range(tempoPayOff)]))
+
+        # print(datas)
 
         labels = datas
         default = amortizacao
