@@ -61,7 +61,7 @@ class ChartData(APIView):
         hoje = dt.datetime.today()
 
         datas = [hoje + dt.timedelta(days=i) for i in range(tempoPayOff)]
-        datas = [i.strftime('%d/%M/%Y') for i in datas]
+        datas = [i.strftime('%d/%m/%Y') for i in datas]
         amortizacao = list(kitPreco - np.array([radiacao * i for i in range(tempoPayOff)]))
 
         # print(datas)
